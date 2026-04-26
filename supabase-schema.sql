@@ -1,27 +1,27 @@
--- Put this into your Supabase SQL Editor and hit "Run"
+-- FINAL PRODUCTION SCHEMA
+-- Run this in your Supabase SQL Editor
 
-CREATE TABLE public.tickets (
-    reference text primary key,
-    name text not null,
-    phone text not null,
-    status text not null default 'VALID',
-    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+CREATE TABLE IF NOT EXISTS public.tickets (
+    reference text PRIMARY KEY,
+    secret_token uuid NOT NULL UNIQUE,
+    name text,
+    phone text,
+    status text NOT NULL DEFAULT 'VALID',
+    created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Turn on Row Level Security (RLS) but allow public server operations since this is an internal app
+-- Turn on Row Level Security (RLS)
 ALTER TABLE public.tickets ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow public insert for ticket activation" 
-ON public.tickets FOR INSERT 
+-- Clean transition for policies
+DROP POLICY IF EXISTS "Allow public insert for ticket activation" ON public.tickets;
+DROP POLICY IF EXISTS "Allow reading for scanner verification" ON public.tickets;
+DROP POLICY IF EXISTS "Allow update for scanner (mark as used)" ON public.tickets;
+DROP POLICY IF EXISTS "Allow public all access" ON public.tickets;
+
+-- Single robust policy for the tournament
+CREATE POLICY "Allow public all access" 
+ON public.tickets FOR ALL 
 TO public 
+USING (true) 
 WITH CHECK (true);
-
-CREATE POLICY "Allow reading for scanner verification" 
-ON public.tickets FOR SELECT 
-TO public 
-USING (true);
-
-CREATE POLICY "Allow update for scanner (mark as used)" 
-ON public.tickets FOR UPDATE 
-TO public
-USING (true);

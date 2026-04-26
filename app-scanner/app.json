@@ -1,27 +1,28 @@
 {
   "expo": {
-    "name": "app-scanner",
-    "slug": "app-scanner",
+    "name": "JCI Tkawer Scanner",
+    "slug": "jci-tkawer-scanner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#050A18"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.jcitkawer.scanner",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#050A18"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "permissions": ["CAMERA"],
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
