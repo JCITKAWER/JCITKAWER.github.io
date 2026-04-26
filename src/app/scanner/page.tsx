@@ -5,10 +5,10 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { CheckCircle, XCircle, ShieldAlert, Lock, ArrowLeft, ScanLine, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import { MeshGradient } from '@/components/immersive/backgrounds/mesh-gradient';
-import { FloatingBlobs } from '@/components/immersive/effects/floating-blobs';
-import { GradientText } from '@/components/immersive/typography/gradient-text';
+import { MeshGradient, FloatingBlobs } from '@/components/immersive/effects/mesh-gradient';
+import { GradientText } from '@/components/immersive/effects/gradient-text';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ScannerPage() {
   const [pin, setPin] = useState('');
@@ -115,8 +115,10 @@ export default function ScannerPage() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-jci-blue/30 overflow-hidden font-sans">
-      <MeshGradient variant="dark" />
-      <FloatingBlobs />
+      <div className="absolute inset-0 z-0">
+        <MeshGradient variant="glow" />
+        <FloatingBlobs />
+      </div>
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
         

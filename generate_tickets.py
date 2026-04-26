@@ -1,11 +1,17 @@
 import qrcode
 import os
 import uuid
+import string
+import random
 
 # Configuration
 OUTPUT_DIR = "tickets_qr"
 MAPPING_FILE = "ticket_secrets.txt"
 SQL_FILE = "upload_to_supabase.sql"
+
+def generate_random_ref():
+    chars = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(chars, k=5))
 
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
@@ -20,7 +26,7 @@ with open(MAPPING_FILE, "w") as f_map, open(SQL_FILE, "w") as f_sql:
     f_sql.write("INSERT INTO public.tickets (reference, secret_token) VALUES\n")
     
     for i in range(1, count + 1):
-        ref = f"TKW-{i:03d}"
+        ref = f"TKW-{generate_random_ref()}"
         secret_token = str(uuid.uuid4())
         
         # QR Code
