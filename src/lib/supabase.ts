@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zafngjvhbtrytoeahzcc.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable__EhVlw40Om9Xg2rosA3nIg_LFvbvaAL';
+// Force the new production keys, ignoring any old cached keys in Vercel.
+const supabaseUrl = 'https://zafngjvhbtrytoeahzcc.supabase.co';
+const supabaseAnonKey = 'sb_publishable__EhVlw40Om9Xg2rosA3nIg_LFvbvaAL';
 
 // Initialize the Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

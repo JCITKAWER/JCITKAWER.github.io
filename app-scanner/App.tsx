@@ -20,7 +20,7 @@ export default function App() {
   const [status, setStatus] = useState<'idle' | 'scanning' | 'valid' | 'invalid'>('idle');
   const [attendeeName, setAttendeeName] = useState('');
   const [scanResult, setScanResult] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [pin, setPin] = useState('');
 
   const ADMIN_PIN = '1234';
@@ -38,6 +38,7 @@ export default function App() {
 
     try {
       const token = data.trim();
+      console.log('Scanning token:', token);
       
       const { data: ticket, error } = await supabase
         .from('tickets')
@@ -45,34 +46,42 @@ export default function App() {
         .eq('secret_token', token)
         .maybeSingle();
 
-      if (error || !ticket) {
+      if (error) {
+        console.error('Database Error:', error.message);
         setStatus('invalid');
-        setScanResult('Code Inconnu');
+        setScanResult('Erreur DB');
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      } else if (!ticket.name) {
+      } else if (!ticket) {
         setStatus('invalid');
-        setScanResult('Non Activé');
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        setScanResult('Code Inconu');
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       } else if (ticket.status === 'USED') {
         setStatus('invalid');
-        setAttendeeName(ticket.name);
+        setAttendeeName(ticket.name || 'Anonyme');
         setScanResult('Déjà Utilisé');
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       } else {
         // Mark as USED
-        await supabase
+        const { error: updateError } = await supabase
           .from('tickets')
           .update({ status: 'USED' })
           .eq('secret_token', token);
 
-        setStatus('valid');
-        setAttendeeName(ticket.name);
-        setScanResult(ticket.reference);
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (updateError) {
+          console.error('Update Error:', updateError.message);
+          setStatus('invalid');
+          setScanResult('Erreur Sync');
+        } else {
+          setStatus('valid');
+          setAttendeeName(ticket.name || 'Activé (Test)');
+          setScanResult(ticket.reference);
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
       }
     } catch (e) {
+      console.error('System Error:', e);
       setStatus('invalid');
-      setScanResult('Erreur Réseau');
+      setScanResult('Erreur Système');
     }
 
     // Reset after 3 seconds
@@ -285,6 +294,7 @@ const styles = StyleSheet.create({
   },
   authTitle: { color: '#fff', fontSize: 28, fontWeight: '900', letterSpacing: -1 },
   authSub: { color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center', marginTop: 10, marginBottom: 40 },
+  pinRow: { width: '100%', alignItems: 'center' },
   loginBtn: {
     backgroundColor: '#0097D7',
     width: '100%',
