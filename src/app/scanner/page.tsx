@@ -2,8 +2,13 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, ShieldAlert, Lock, ArrowLeft, ScanLine, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { MeshGradient } from '@/components/immersive/backgrounds/mesh-gradient';
+import { FloatingBlobs } from '@/components/immersive/effects/floating-blobs';
+import { GradientText } from '@/components/immersive/typography/gradient-text';
+import Link from 'next/link';
 
 export default function ScannerPage() {
   const [pin, setPin] = useState('');
@@ -11,46 +16,51 @@ export default function ScannerPage() {
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'valid' | 'invalid' | 'scanning'>('idle');
   const [attendeeName, setAttendeeName] = useState<string>('');
+  const [loading, setLoading] = useState(false);
   
-  const ADMIN_PIN = '1234'; // Change this to your preferred PIN!
+  const ADMIN_PIN = '1234'; 
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (pin === ADMIN_PIN) {
       setIsAuthenticated(true);
     } else {
-      alert('PIN Incorrect !');
       setPin('');
+      // Simple shake effect logic could go here
     }
   };
 
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
-
   const statusRef = useRef(status);
+  
   useEffect(() => {
     statusRef.current = status;
   }, [status]);
 
   useEffect(() => {
-    // Only run on client
+    if (!isAuthenticated) return;
+
     const html5QrcodeScanner = new Html5QrcodeScanner(
       "qr-reader",
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      /* verbose= */ false
+      { 
+        fps: 20, 
+        qrbox: { width: 280, height: 280 },
+        aspectRatio: 1.0,
+        showTorchButtonIfSupported: true
+      },
+      false
     );
+    
     scannerRef.current = html5QrcodeScanner;
     
     const onScanSuccess = async (decodedText: string) => {
-      // Prevent multiple rapid scans using the latest ref
-      const currentStatus = statusRef.current;
-      if (currentStatus === 'scanning' || currentStatus === 'valid' || currentStatus === 'invalid') return;
+      if (statusRef.current !== 'idle') return;
       
       setScanResult(decodedText);
       setStatus('scanning');
 
       try {
         const token = decodedText.trim();
-        console.log(`Verifying secure token: ${token}`);
         
         // 1. Fetch ticket by secret token
         const { data: ticket, error: fetchError } = await supabase
@@ -61,14 +71,13 @@ export default function ScannerPage() {
 
         if (fetchError || !ticket) {
           setStatus('invalid');
-          setScanResult('BILLET INVALIDE (Token non reconnu)');
         } else if (!ticket.name) {
           setStatus('invalid');
-          setScanResult('ERREUR: Billet non activé par le client.');
+          setScanResult('Non Activé');
         } else if (ticket.status === 'USED') {
           setStatus('invalid');
           setAttendeeName(ticket.name);
-          setScanResult('DÉJÀ SCANNÉ ! Attention fraude.');
+          setScanResult('Déjà Scanné');
         } else {
           // 2. Mark as Used
           const { error: updateError } = await supabase
@@ -80,92 +89,155 @@ export default function ScannerPage() {
 
           setStatus('valid');
           setAttendeeName(ticket.name);
-          setScanResult(`ACCÈS AUTORISÉ (${ticket.reference})`);
+          setScanResult(ticket.reference);
         }
 
-        // Reset after 3 seconds for the next person
         setTimeout(() => {
           setStatus('idle');
           setScanResult(null);
           setAttendeeName('');
-        }, 3000);
+        }, 4000);
 
       } catch (err) {
-        console.error(err);
         setStatus('invalid');
-        setScanResult('Erreur de connexion');
-        setTimeout(() => setStatus('idle'), 3000);
+        setTimeout(() => setStatus('idle'), 4000);
       }
     };
 
-    const onScanFailure = () => {
-      // We ignore failures as the scanner constantly tries to find a QR code
-    };
-
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    html5QrcodeScanner.render(onScanSuccess, () => {});
 
     return () => {
       if (scannerRef.current) {
-        scannerRef.current.clear().catch(error => {
-          console.error("Failed to clear html5QrcodeScanner. ", error);
-        });
+        scannerRef.current.clear().catch(() => {});
       }
     };
-  }, []);
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#0A1130] flex flex-col items-center justify-center p-4">
-        <form onSubmit={handlePinSubmit} className="w-full max-w-xs bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl text-center">
-          <h1 className="text-xl font-black text-white mb-6 uppercase tracking-widest">Admin Access</h1>
-          <input 
-            type="password" 
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            placeholder="Enter PIN" 
-            className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-4 text-center text-2xl font-black text-white focus:outline-none focus:ring-2 focus:ring-jci-blue mb-4"
-          />
-          <button type="submit" className="w-full bg-jci-blue text-white font-bold py-4 rounded-xl">Unlock Scanner</button>
-        </form>
-      </div>
-    );
-  }
+  }, [isAuthenticated]);
 
   return (
-    <div className="min-h-screen bg-[#0A1130] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white flex flex-col overflow-hidden rounded-2xl shadow-2xl">
-        <div className="bg-[#0d162b] text-white p-4 text-center pb-6">
-          <h1 className="text-xl font-black mb-1">Scanner d&apos;Entrée</h1>
-          <p className="text-xs text-white/60">JCI Tkawer 2.0</p>
-        </div>
-        
-        {/* The target Div for HTML5-QRCode injection */}
-        <div id="qr-reader" className="w-full bg-black min-h-[300px]"></div>
+    <div className="min-h-screen bg-black text-white selection:bg-jci-blue/30 overflow-hidden font-sans">
+      <MeshGradient variant="dark" />
+      <FloatingBlobs />
 
-        {/* Status Overlay */}
-        <div className={`p-6 text-center transition-colors duration-300 ${status === 'valid' ? 'bg-green-500' : status === 'invalid' ? 'bg-red-500' : 'bg-gray-100'}`}>
-          {status === 'idle' && (
-            <p className="text-gray-500 font-medium">En attente de scan...</p>
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
+        
+        <AnimatePresence mode="wait">
+          {!isAuthenticated ? (
+            <motion.div 
+              key="auth"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              className="w-full max-w-sm"
+            >
+              <div className="text-center mb-10">
+                <div className="w-20 h-20 bg-jci-blue/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-jci-blue/20">
+                  <Lock className="text-jci-blue w-8 h-8" />
+                </div>
+                <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">Sécurité Entrée</h1>
+                <p className="text-white/40 text-sm font-medium">Veuillez entrer votre Code PIN Admin</p>
+              </div>
+
+              <form onSubmit={handlePinSubmit} className="space-y-6">
+                <input 
+                  type="password" 
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  placeholder="••••" 
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-3xl p-8 text-center text-4xl font-black tracking-[0.5em] focus:outline-none focus:border-jci-blue/50 focus:bg-white/[0.08] transition-all"
+                  autoFocus
+                />
+                <button 
+                  type="submit" 
+                  className="w-full h-20 bg-jci-blue text-white font-black rounded-3xl text-xl hover:bg-jci-blue/80 active:scale-95 transition-all shadow-lg shadow-jci-blue/20"
+                >
+                  DÉVERROUILLER
+                </button>
+              </form>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="scanner"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="w-full max-w-xl flex flex-col items-center"
+            >
+              {/* Header */}
+              <div className="w-full flex items-center justify-between mb-8 px-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-jci-teal/10 rounded-xl flex items-center justify-center border border-jci-teal/20">
+                    <ScanLine className="text-jci-teal w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-sm uppercase tracking-widest leading-none">Scanner Direct</h2>
+                    <span className="text-[10px] text-white/30 font-bold tracking-tighter uppercase">JCI Tkawer 2.0</span>
+                  </div>
+                </div>
+                <Link href="/" className="text-white/20 hover:text-white transition-colors">
+                  <ArrowLeft size={24} />
+                </Link>
+              </div>
+
+              {/* Viewfinder Wrapper */}
+              <div className="relative w-full aspect-square max-w-[400px] mb-12">
+                {/* Visual Frame Decorations */}
+                <div className="absolute -top-4 -left-4 w-12 h-12 border-l-4 border-t-4 border-jci-blue rounded-tl-2xl z-20" />
+                <div className="absolute -top-4 -right-4 w-12 h-12 border-r-4 border-t-4 border-jci-blue rounded-tr-2xl z-20" />
+                <div className="absolute -bottom-4 -left-4 w-12 h-12 border-l-4 border-bottom-4 border-jci-blue rounded-bl-2xl z-20" />
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r-4 border-bottom-4 border-jci-blue rounded-br-2xl z-20" />
+                
+                {/* THE SCANNER DIV */}
+                <div className="relative w-full h-full rounded-[40px] overflow-hidden bg-black/40 border border-white/5 shadow-2xl backdrop-blur-3xl">
+                  <div id="qr-reader" className="w-full h-full"></div>
+                  
+                  {/* Overlay when processing */}
+                  <AnimatePresence>
+                    {status !== 'idle' && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className={`absolute inset-0 z-30 flex flex-col items-center justify-center gap-6 backdrop-blur-md ${
+                          status === 'valid' ? 'bg-jci-teal/80' : 
+                          status === 'invalid' ? 'bg-red-600/80' : 
+                          'bg-black/60'
+                        }`}
+                      >
+                        {status === 'scanning' && <Loader2 className="w-16 h-16 animate-spin text-white" />}
+                        {status === 'valid' && (
+                          <>
+                            <CheckCircle size={80} className="text-white" />
+                            <div className="text-center">
+                              <h3 className="text-4xl font-black text-white uppercase tracking-tighter">ACCÈS VALIDE</h3>
+                              <p className="text-white/90 font-bold text-xl mt-2">{attendeeName}</p>
+                              <span className="bg-white/20 px-4 py-1 rounded-full text-xs font-bold mt-4 inline-block">{scanResult}</span>
+                            </div>
+                          </>
+                        )}
+                        {status === 'invalid' && (
+                          <>
+                            <ShieldAlert size={80} className="text-white" />
+                            <div className="text-center">
+                              <h3 className="text-4xl font-black text-white uppercase tracking-tighter">REFUSÉ</h3>
+                              <p className="text-white/90 font-bold text-lg mt-2">{scanResult || 'Code Inconnu'}</p>
+                              {attendeeName && <p className="text-white/60 text-sm mt-1">Propriétaire: {attendeeName}</p>}
+                            </div>
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Bottom Instructions */}
+              <div className="text-center">
+                <p className="text-white/30 text-xs font-bold uppercase tracking-[0.2em] animate-pulse">
+                  Aligner le QR code dans le cadre
+                </p>
+              </div>
+            </motion.div>
           )}
-          {status === 'scanning' && (
-            <p className="text-gray-800 font-bold animate-pulse">Vérification en cours...</p>
-          )}
-          {status === 'valid' && (
-            <div className="flex flex-col items-center text-white">
-              <CheckCircle size={48} className="mb-2" />
-              <h2 className="text-2xl font-black">ACCÈS AUTORISÉ</h2>
-              <p className="text-white/90 text-lg mt-1 font-medium">{attendeeName}</p>
-              <p className="text-white/70 text-sm">{scanResult}</p>
-            </div>
-          )}
-          {status === 'invalid' && (
-            <div className="flex flex-col items-center text-white">
-              <XCircle size={48} className="mb-2" />
-              <h2 className="text-2xl font-black">BILLET INVALIDE</h2>
-              <p className="text-white/90 text-sm mt-1">Ce billet est introuvable ou déjà scanné !</p>
-            </div>
-          )}
-        </div>
+        </AnimatePresence>
       </div>
     </div>
   );

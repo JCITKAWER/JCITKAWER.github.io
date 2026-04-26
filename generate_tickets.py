@@ -10,12 +10,7 @@ SQL_FILE = "upload_to_supabase.sql"
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-try:
-    count_str = input("How many tickets do you want to generate? ")
-    count = int(count_str)
-except ValueError:
-    print("Invalid number. Using 10 as default.")
-    count = 10
+count = 50
 
 print(f"Generating {count} secure tickets...")
 
