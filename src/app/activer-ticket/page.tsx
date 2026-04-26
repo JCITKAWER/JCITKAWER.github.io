@@ -63,100 +63,82 @@ export default function ActiverTicketPage() {
       <MeshGradient variant="glow" />
       <FloatingBlobs />
 
-      <main className="container-pro relative z-10 pt-40 pb-20 min-h-[calc(100vh-100px)] flex flex-col items-center justify-center">
+      <main className="container-pro relative z-10 py-20 min-h-screen flex flex-col items-center justify-center">
         <motion.div 
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-2xl"
+          transition={{ duration: 0.8 }}
+          className="w-full max-w-xl"
         >
           {/* Header Section */}
-          <div className="flex flex-col items-center mb-16 lg:mb-24">
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="badge mb-6 px-6 py-2 text-xs"
-            >
-              Accès Officiel • JCI TKAWER
-            </motion.span>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-center leading-[0.9] tracking-tighter mb-8 uppercase">
+          <div className="flex flex-col items-center mb-10">
+            <span className="badge mb-4">Accès Officiel</span>
+            <h1 className="text-4xl md:text-6xl font-black text-center leading-tight tracking-tight mb-4 uppercase">
               <GradientText variant="jci" as="span" className="block">ACTIVER</GradientText>
               <GradientText variant="gold" as="span" className="block">BILLET</GradientText>
             </h1>
-            <p className="text-white/40 text-center text-base md:text-xl max-w-md leading-relaxed font-medium">
-              Veuillez lier votre billet électronique à votre identité pour accéder au stage.
+            <p className="text-white/40 text-center text-sm md:text-base max-w-sm leading-relaxed">
+              Associez votre billet physique à votre identité pour l'entrée.
             </p>
           </div>
 
           {/* Form Card */}
-          <div className="glass-card p-10 md:p-16 lg:p-20 rounded-[32px] md:rounded-[48px] relative overflow-hidden shadow-[0_32px_120px_rgba(0,10,20,0.8)]">
+          <div className="glass-card p-8 md:p-10 rounded-3xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-jci-blue/30 to-transparent" />
-            <div className="absolute -top-32 -right-32 w-80 h-80 bg-jci-blue/5 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-jci-teal/5 blur-[120px] rounded-full pointer-events-none" />
             
             <AnimatePresence mode="wait">
               {message && (
                 <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className={`mb-12 p-8 rounded-3xl flex items-start gap-6 ${
+                  className={`mb-8 p-5 rounded-xl flex items-start gap-4 ${
                     message.type === 'success' 
                       ? 'bg-jci-teal/10 text-jci-teal border border-jci-teal/20' 
                       : 'bg-red-500/10 text-red-400 border border-red-500/20'
                   }`}
                 >
-                  <div className={`p-3 rounded-xl ${message.type === 'success' ? 'bg-jci-teal/20' : 'bg-red-500/20'}`}>
-                    {message.type === 'success' ? <CheckCircle className="w-8 h-8 shrink-0" /> : <AlertCircle className="w-8 h-8 shrink-0" />}
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-black text-xl uppercase tracking-tight">{message.type === 'success' ? 'Succès!' : 'Attention'}</p>
-                    <p className="text-base font-medium opacity-90 leading-relaxed">{message.text}</p>
-                  </div>
+                  {message.type === 'success' ? <CheckCircle className="w-5 h-5 shrink-0 mt-0.5" /> : <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />}
+                  <p className="text-sm font-medium">{message.text}</p>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <form onSubmit={onSubmit} className="space-y-12">
-              <div className="space-y-6">
-                <label className="flex items-center gap-3 text-[12px] font-black text-white/20 uppercase tracking-[0.3em] ml-2">
-                  <User size={14} className="text-jci-blue" /> Informations Personnelles
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">
+                  Nom & Prénom
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                  <div className="space-y-2">
-                    <input 
-                      type="text" 
-                      name="name" 
-                      placeholder="Nom & Prénom" 
-                      autoComplete="off"
-                      className="w-full h-20 bg-white/[0.02] border border-white/10 rounded-2xl px-8 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue/50 focus:bg-white/[0.08] focus:ring-8 focus:ring-jci-blue/5 hover:bg-white/[0.04] transition-all duration-500 shadow-inner text-lg font-bold" 
-                      required 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <input 
-                      type="tel" 
-                      name="phone" 
-                      placeholder="Téléphone" 
-                      autoComplete="off"
-                      className="w-full h-20 bg-white/[0.02] border border-white/10 rounded-2xl px-8 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue/50 focus:bg-white/[0.08] focus:ring-8 focus:ring-jci-blue/5 hover:bg-white/[0.04] transition-all duration-500 shadow-inner text-lg font-bold" 
-                      required 
-                    />
-                  </div>
-                </div>
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Ex: Mohamed Amine" 
+                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue/50 transition-all font-medium" 
+                  required 
+                />
               </div>
 
-              <div className="space-y-6">
-                <label className="flex items-center gap-3 text-[12px] font-black text-white/20 uppercase tracking-[0.3em] ml-2">
-                  <Ticket size={14} className="text-jci-yellow" /> Identification du Billet
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">
+                  Téléphone
+                </label>
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  placeholder="Ex: 55 123 456" 
+                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue/50 transition-all font-medium" 
+                  required 
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">
+                  Référence du Billet
                 </label>
                 <input 
                   type="text" 
                   name="ref" 
-                  placeholder="CODE DE RÉFÉRENCE" 
-                  autoComplete="off"
-                  className="w-full h-24 bg-white/[0.03] border border-white/10 rounded-2xl px-10 text-white placeholder-white/20 focus:outline-none focus:border-jci-yellow/50 focus:bg-white/[0.1] focus:ring-8 focus:ring-jci-yellow/5 hover:bg-white/[0.06] transition-all duration-500 shadow-inner uppercase font-mono tracking-[0.4em] text-2xl" 
+                  placeholder="Ex: TKW-001" 
+                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-yellow/50 transition-all uppercase font-mono tracking-widest" 
                   required 
                 />
               </div>
@@ -164,14 +146,14 @@ export default function ActiverTicketPage() {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="btn-primary w-full h-24 md:h-28 text-2xl md:text-3xl mt-8 flex items-center justify-center gap-6 group/btn shadow-[0_20px_60px_rgba(0,151,215,0.4)] hover:shadow-[0_40px_100px_rgba(0,151,215,0.6)] active:scale-95 transition-all duration-300"
+                className="btn-primary w-full h-16 text-lg mt-4 flex items-center justify-center gap-3 transition-opacity disabled:opacity-50"
               >
                 {loading ? (
-                  <Loader2 className="w-10 h-10 animate-spin" />
+                  <Loader2 className="w-6 h-6 animate-spin" />
                 ) : (
                   <>
-                    <span className="tracking-tighter font-black">ACTIVER MAINTENANT</span>
-                    <ArrowRight size={32} className="group-hover/btn:translate-x-3 transition-transform duration-500" />
+                    <span className="font-bold">ACTIVER MAINTENANT</span>
+                    <ArrowRight size={20} />
                   </>
                 )}
               </button>
@@ -179,11 +161,6 @@ export default function ActiverTicketPage() {
           </div>
         </motion.div>
       </main>
-
-      {/* Massive Spacer to ensure the footer has air */}
-      <div className="h-[20vh] md:h-[30vh] w-full" aria-hidden />
-
-      <SceneFooter />
     </div>
   );
 }
