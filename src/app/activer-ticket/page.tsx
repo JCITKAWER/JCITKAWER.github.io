@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, User, Phone, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import Image from 'next/image';
+import { Ticket, User, Phone, CheckCircle, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
+import { MeshGradient, FloatingBlobs } from '@/components/immersive/effects/mesh-gradient';
+import { GradientText } from '@/components/immersive/effects/gradient-text';
+import { SceneFooter } from '@/components/immersive/scene-footer';
 
 export default function ActiverTicketPage() {
   const [loading, setLoading] = useState(false);
@@ -57,122 +59,109 @@ export default function ActiverTicketPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-black">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <Image 
-          src="/images/soccer-bg.png" 
-          alt="Background" 
-          fill 
-          className="object-cover opacity-60 scale-105 blur-sm"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80" />
-      </div>
+    <div className="relative min-h-screen bg-jci-black selection:bg-jci-blue/30 selection:text-white overflow-x-hidden">
+      <MeshGradient variant="glow" />
+      <FloatingBlobs />
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-lg"
-      >
-        <div className="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl shadow-cyan-500/10">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-jci-blue to-jci-teal rounded-2xl flex items-center justify-center shadow-lg shadow-jci-blue/20">
-              <Ticket className="text-white w-8 h-8" />
-            </div>
+      <main className="container-pro relative z-10 pt-24 pb-32 min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-xl"
+        >
+          <div className="flex flex-col items-center mb-10">
+            <span className="badge mb-4">Accès Officiel</span>
+            <h1 className="text-4xl md:text-6xl font-black text-center leading-[0.95] tracking-tight mb-4">
+              <GradientText variant="jci" as="span" className="block">ACTIVER VOTRE</GradientText>
+              <GradientText variant="gold" as="span" className="block text-3xl md:text-5xl">BILLET PHYSIQUE</GradientText>
+            </h1>
+            <p className="text-white/50 text-center text-sm md:text-base max-w-md">
+              Lie ton billet à ton identité pour garantir la validité de ton entrée au tournoi.
+            </p>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-black text-white text-center mb-2 tracking-tight">
-            ACTIVER <span className="text-transparent bg-clip-text bg-gradient-to-r from-jci-blue to-jci-teal">BILLET</span>
-          </h1>
-          <p className="text-white/50 text-center text-sm md:text-base mb-8">
-            Associez votre identité à votre billet pour sécuriser votre entrée.
-          </p>
-          
-          <AnimatePresence mode="wait">
-            {message && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className={`mb-8 p-4 rounded-2xl flex items-center gap-3 ${
-                  message.type === 'success' 
-                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                    : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                }`}
-              >
-                {message.type === 'success' ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
-                <p className="text-sm font-medium leading-relaxed">{message.text}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="glass-card p-8 md:p-12 rounded-[24px] relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-jci-blue/10 blur-[60px] rounded-full pointer-events-none" />
+            
+            <AnimatePresence mode="wait">
+              {message && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className={`mb-8 p-5 rounded-2xl flex items-start gap-4 ${
+                    message.type === 'success' 
+                      ? 'bg-jci-teal/10 text-jci-teal border border-jci-teal/20' 
+                      : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  }`}
+                >
+                  {message.type === 'success' ? <CheckCircle className="w-6 h-6 shrink-0" /> : <AlertCircle className="w-6 h-6 shrink-0" />}
+                  <p className="text-sm font-semibold">{message.text}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          <form onSubmit={onSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-widest ml-1">
-                <User className="w-3 h-3" /> Nom Complet
-              </label>
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="Ex: Ahmed Ben Ali" 
-                autoComplete="off"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue focus:ring-1 focus:ring-jci-blue/50 transition-all text-lg" 
-                required 
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-widest ml-1">
-                <Phone className="w-3 h-3" /> Téléphone
-              </label>
-              <input 
-                type="tel" 
-                name="phone" 
-                placeholder="Ex: 52 781 301" 
-                autoComplete="off"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue focus:ring-1 focus:ring-jci-blue/50 transition-all text-lg" 
-                required 
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-widest ml-1">
-                <Ticket className="w-3 h-3" /> Référence du Billet
-              </label>
-              <input 
-                type="text" 
-                name="ref" 
-                placeholder="Ex: TKW-001" 
-                autoComplete="off"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue focus:ring-1 focus:ring-jci-blue/50 transition-all text-lg uppercase font-mono" 
-                required 
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="relative group w-full overflow-hidden rounded-2xl bg-gradient-to-r from-jci-blue to-jci-teal p-px transition-all duration-300 hover:shadow-[0_0_20px_rgba(30,174,219,0.3)] disabled:opacity-50"
-            >
-              <div className="relative flex items-center justify-center gap-2 bg-black/10 group-hover:bg-transparent px-6 py-5 rounded-[15px] transition-all duration-300">
-                {loading ? (
-                  <Loader2 className="w-6 h-6 animate-spin text-white" />
-                ) : (
-                  <span className="text-white font-black uppercase tracking-wider text-xl group-hover:scale-105 transition-transform duration-300">
-                    ACTIVER MAINTENANT
-                  </span>
-                )}
+            <form onSubmit={onSubmit} className="space-y-7">
+              <div className="space-y-2.5">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] ml-1">
+                  <User size={12} className="text-jci-blue" /> Nom & Prénom
+                </label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Ex: Mohamed Amine" 
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue/50 focus:bg-white/[0.07] focus:ring-4 focus:ring-jci-blue/5 hover:border-white/20 transition-all duration-300 shadow-inner" 
+                  required 
+                />
               </div>
-            </button>
-          </form>
 
-          <p className="mt-8 text-center text-white/30 text-xs">
-            © 2026 JCI ElFejja Bessetine. Tous droits réservés.
-          </p>
-        </div>
-      </motion.div>
-    </main>
+              <div className="space-y-2.5">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] ml-1">
+                  <Phone size={12} className="text-jci-blue" /> Numéro de téléphone
+                </label>
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  placeholder="Ex: 55 123 456" 
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-blue/50 focus:bg-white/[0.07] focus:ring-4 focus:ring-jci-blue/5 hover:border-white/20 transition-all duration-300 shadow-inner" 
+                  required 
+                />
+              </div>
+
+              <div className="space-y-2.5">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] ml-1">
+                  <Ticket size={12} className="text-jci-yellow" /> Réf. Billet (Code au dos)
+                </label>
+                <input 
+                  type="text" 
+                  name="ref" 
+                  placeholder="TKW-XXX" 
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-jci-yellow/40 focus:bg-white/[0.07] focus:ring-4 focus:ring-jci-yellow/5 hover:border-white/20 transition-all duration-300 shadow-inner uppercase font-mono tracking-widest" 
+                  required 
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="btn-primary w-full mt-4 flex items-center justify-center gap-3 group/btn"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <span>ACTIVER MON BILLET</span>
+                    <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </motion.div>
+      </main>
+
+      <SceneFooter />
+    </div>
   );
 }
-
