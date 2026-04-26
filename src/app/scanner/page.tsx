@@ -3,13 +3,27 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { verifyAndScanTicket } from '@/actions/tickets';
+import { supabase } from '@/lib/supabase';
 
 export default function ScannerPage() {
+  const [pin, setPin] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'valid' | 'invalid' | 'scanning'>('idle');
   const [attendeeName, setAttendeeName] = useState<string>('');
   
+  const ADMIN_PIN = '1234'; // Change this to your preferred PIN!
+
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pin === ADMIN_PIN) {
+      setIsAuthenticated(true);
+    } else {
+      alert('PIN Incorrect !');
+      setPin('');
+    }
+  };
+
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   const statusRef = useRef(status);
@@ -35,13 +49,39 @@ export default function ScannerPage() {
       setStatus('scanning');
 
       try {
-        console.log(`Checking ref: ${decodedText}`);
+        const token = decodedText.trim();
+        console.log(`Verifying secure token: ${token}`);
         
-        const res = await verifyAndScanTicket(decodedText);
+        // 1. Fetch ticket by secret token
+        const { data: ticket, error: fetchError } = await supabase
+          .from('tickets')
+          .select('*')
+          .eq('secret_token', token)
+          .maybeSingle();
 
-        setStatus(res.status as 'valid' | 'invalid');
-        if (res.name) setAttendeeName(res.name);
-        setScanResult(res.message);
+        if (fetchError || !ticket) {
+          setStatus('invalid');
+          setScanResult('BILLET INVALIDE (Token non reconnu)');
+        } else if (!ticket.name) {
+          setStatus('invalid');
+          setScanResult('ERREUR: Billet non activé par le client.');
+        } else if (ticket.status === 'USED') {
+          setStatus('invalid');
+          setAttendeeName(ticket.name);
+          setScanResult('DÉJÀ SCANNÉ ! Attention fraude.');
+        } else {
+          // 2. Mark as Used
+          const { error: updateError } = await supabase
+            .from('tickets')
+            .update({ status: 'USED' })
+            .eq('secret_token', token);
+
+          if (updateError) throw updateError;
+
+          setStatus('valid');
+          setAttendeeName(ticket.name);
+          setScanResult(`ACCÈS AUTORISÉ (${ticket.reference})`);
+        }
 
         // Reset after 3 seconds for the next person
         setTimeout(() => {
@@ -50,9 +90,10 @@ export default function ScannerPage() {
           setAttendeeName('');
         }, 3000);
 
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
         setStatus('invalid');
+        setScanResult('Erreur de connexion');
         setTimeout(() => setStatus('idle'), 3000);
       }
     };
@@ -71,6 +112,24 @@ export default function ScannerPage() {
       }
     };
   }, []);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0A1130] flex flex-col items-center justify-center p-4">
+        <form onSubmit={handlePinSubmit} className="w-full max-w-xs bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl text-center">
+          <h1 className="text-xl font-black text-white mb-6 uppercase tracking-widest">Admin Access</h1>
+          <input 
+            type="password" 
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            placeholder="Enter PIN" 
+            className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-4 text-center text-2xl font-black text-white focus:outline-none focus:ring-2 focus:ring-jci-blue mb-4"
+          />
+          <button type="submit" className="w-full bg-jci-blue text-white font-bold py-4 rounded-xl">Unlock Scanner</button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0A1130] flex flex-col items-center justify-center p-4">

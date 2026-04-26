@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useRef, type ReactNode, type CSSProperties } from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 export function MagneticButton({
@@ -44,16 +45,17 @@ export function MagneticButton({
 
   if (href) {
     return (
-      <motion.a
-        ref={ref as React.RefObject<HTMLAnchorElement>}
-        href={href}
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        className={sharedClass}
-        style={motionStyle}
-      >
-        {children}
-      </motion.a>
+      <Link href={href} passHref legacyBehavior>
+        <motion.a
+          ref={ref as React.RefObject<HTMLAnchorElement>}
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          className={sharedClass}
+          style={motionStyle}
+        >
+          {children}
+        </motion.a>
+      </Link>
     );
   }
   return (

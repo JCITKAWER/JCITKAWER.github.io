@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { assignTicket } from '@/actions/tickets';
+import { supabase } from '@/lib/supabase';
 
 export default function ActiverTicketPage() {
   const [loading, setLoading] = useState(false);
@@ -15,15 +15,41 @@ export default function ActiverTicketPage() {
     const formData = new FormData(e.currentTarget);
     const name = formData.get('name') as string;
     const phone = formData.get('phone') as string;
-    const ref = formData.get('ref') as string;
+    const ref = (formData.get('ref') as string).toUpperCase().trim();
 
-    const res = await assignTicket(ref, name, phone);
-    
-    if (res.success) {
-      setMessage({ text: res.message, type: 'success' });
+    try {
+      // 1. Check if the physical ticket reference exists and is not yet assigned
+      const { data: ticket, error: fetchError } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('reference', ref)
+        .maybeSingle();
+
+      if (fetchError || !ticket) {
+        setMessage({ text: 'Référence de billet invalide. Vérifiez le code sur votre ticket.', type: 'error' });
+        setLoading(false);
+        return;
+      }
+
+      if (ticket.name) {
+        setMessage({ text: 'Ce billet a déjà été activé par une autre personne.', type: 'error' });
+        setLoading(false);
+        return;
+      }
+
+      // 2. Assign the user's name and phone to this ticket
+      const { error: updateError } = await supabase
+        .from('tickets')
+        .update({ name, phone })
+        .eq('reference', ref);
+
+      if (updateError) throw updateError;
+
+      setMessage({ text: 'Billet activé avec succès ! Présentez votre ticket physique à l\'entrée.', type: 'success' });
       (e.target as HTMLFormElement).reset();
-    } else {
-      setMessage({ text: res.message, type: 'error' });
+    } catch (err) {
+      console.error(err);
+      setMessage({ text: 'Erreur lors de l\'activation. Vérifiez votre connexion.', type: 'error' });
     }
     
     setLoading(false);
