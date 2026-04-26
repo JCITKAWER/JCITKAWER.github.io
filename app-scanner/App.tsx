@@ -8,7 +8,7 @@ import { Lock, ScanLine, ShieldAlert, CheckCircle2, ChevronLeft } from 'lucide-r
 
 // Supabase Configuration
 const SUPABASE_URL = 'https://zafngjvhbtrytoeahzcc.supabase.co';
-const SUPABASE_ANON_KEY = ''; // ADD YOUR KEY HERE
+const SUPABASE_ANON_KEY = 'sb_publishable__EhVlw40Om9Xg2rosA3nIg_LFvbvaAL';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
