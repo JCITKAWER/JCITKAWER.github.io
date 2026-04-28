@@ -33,7 +33,7 @@ export function SceneTickets() {
   const headlineOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
-    <section ref={ref} id="details" className="relative w-full overflow-x-hidden">
+    <section ref={ref} id="details" className="relative w-full overflow-x-hidden bg-[#0A1130]">
       <div className="relative pt-32 md:pt-44 pb-20 md:pb-32 flex flex-col gap-8 md:gap-12">
         <MeshGradient variant="default" />
         <FloatingBlobs />
@@ -54,7 +54,7 @@ export function SceneTickets() {
           </motion.div>
 
           {/* Ticket fan stage */}
-          <div className="relative w-full max-w-4xl h-[180px] md:h-[280px] lg:h-[320px] flex items-center justify-center perspective-[1500px]">
+          <div className="relative w-full max-w-4xl h-[180px] md:h-[280px] lg:h-[320px] flex items-center justify-center md:perspective-[1500px]">
             <TicketCard motionStyle={{ rotate: t1Rotate, x: t1X, y: t1Y, zIndex: 1 }} />
             <TicketCard motionStyle={{ rotate: t2Rotate, y: t2Y, zIndex: 3 }} highlight />
             <TicketCard motionStyle={{ rotate: t3Rotate, x: t3X, y: t3Y, zIndex: 2 }} />

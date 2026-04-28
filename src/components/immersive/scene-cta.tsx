@@ -29,7 +29,7 @@ export function SceneCta() {
   const mascotY = useTransform(scrollYProgress, [0, 1], ['12%', '-12%']);
 
   return (
-    <section ref={ref} id="register" className="relative w-full overflow-hidden">
+    <section ref={ref} id="register" className="relative w-full overflow-hidden bg-[#0A1130]">
       <div className="relative pt-[8rem] pb-[12rem] md:pt-[10rem] md:pb-[18rem]">
         <MeshGradient variant="glow" />
         <FloatingBlobs />
