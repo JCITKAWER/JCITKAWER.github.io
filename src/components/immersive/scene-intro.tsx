@@ -8,7 +8,6 @@ import { GradientText } from './effects/gradient-text';
 import { TiltedCard } from './tilted-card';
 import { IMG } from '@/lib/assets';
 import { EVENT } from '@/lib/event';
-import { ChevronDown } from 'lucide-react';
 
 /* ---------- Particle Field ---------- */
 function Particles() {
@@ -200,20 +199,22 @@ export function SceneIntro() {
         </div>
 
         {/* Scroll indicator */}
-        <motion.div
+        <motion.button
           style={{ opacity: scrollInd }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
+          onClick={() => {
+            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 cursor-pointer border-none bg-transparent"
         >
           <span className="text-[9px] font-bold tracking-[0.35em] uppercase text-white/35">
             Scroll
           </span>
           <motion.div
-            animate={{ y: [0, 10, 0] }}
+            className="w-px h-10 bg-gradient-to-b from-jci-teal/60 to-transparent mt-2"
+            animate={{ scaleY: [0.5, 1, 0.5], opacity: [0.3, 0.8, 0.3] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <ChevronDown size={18} className="text-white/35" />
-          </motion.div>
-        </motion.div>
+          />
+        </motion.button>
       </div>
     </section>
   );

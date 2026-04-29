@@ -9,7 +9,6 @@ import { MagneticButton } from './effects/magnetic-button';
 import { CountdownTimer } from '@/components/ui/countdown-timer';
 import { IMG } from '@/lib/assets';
 import { EVENT } from '@/lib/event';
-import { ArrowRight } from 'lucide-react';
 
 const WhatsAppIcon = ({ size, className }: { size?: number; className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="currentColor" stroke="none" className={className}>
@@ -63,7 +62,6 @@ export function SceneCta() {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <MagneticButton href="/activer-ticket">
                 Activer mon Billet
-                <ArrowRight size={16} />
               </MagneticButton>
               <a href={EVENT.phoneHref} className="btn-secondary !text-white !border-[#25D366]/30 hover:!border-[#25D366] hover:!bg-[#25D366]/10" target="_blank" rel="noopener noreferrer">
                 <WhatsAppIcon size={18} className="mr-2.5 text-[#25D366]" />
