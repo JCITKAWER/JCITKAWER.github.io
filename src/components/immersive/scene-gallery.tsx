@@ -34,7 +34,7 @@ export function SceneGallery() {
   const headlineY = useTransform(scrollYProgress, [0, 0.12], [50, 0]);
 
   return (
-    <section ref={sectionRef} id="gallery" className="relative h-[350vh]">
+    <section ref={sectionRef} id="gallery" className="relative h-[220vh] md:h-[350vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center bg-[#0A1130]">
         {/* Background glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(0,151,215,0.14),transparent_60%)] pointer-events-none" />
