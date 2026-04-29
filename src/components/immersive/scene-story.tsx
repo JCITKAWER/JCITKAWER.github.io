@@ -23,7 +23,7 @@ export function SceneStory() {
   const statsY = useTransform(scrollYProgress, [0.55, 0.65], [50, 0]);
 
   return (
-    <section ref={ref} id="about" className="relative h-[150vh] md:h-[200vh] bg-[#0A1130]">
+    <section ref={ref} id="about" className="relative h-[120vh] md:h-[200vh] bg-[#0A1130]">
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
         {/* Background gradient layers */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,151,215,0.18),transparent_60%)] pointer-events-none" />

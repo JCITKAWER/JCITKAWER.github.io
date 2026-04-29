@@ -81,7 +81,7 @@ export function SceneIntro() {
   const scrollInd = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
 
   return (
-    <section ref={ref} id="hero" className="relative h-[150vh] md:h-[200vh]">
+    <section ref={ref} id="hero" className="relative h-[120vh] md:h-[200vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden scene-stage">
         {/* Layer 0 — Aurora BG */}
         <motion.div style={{ scale: bgScale, opacity: bgOpacity }} className="absolute inset-0">
