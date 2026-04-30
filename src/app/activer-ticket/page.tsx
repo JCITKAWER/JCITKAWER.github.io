@@ -62,7 +62,7 @@ export default function ActiverTicketPage() {
       <MeshGradient variant="glow" />
       <FloatingBlobs />
 
-      <main className="relative z-10 w-full max-w-xl px-6 py-20">
+      <main className="relative z-10 w-full max-w-xl px-10 py-20">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

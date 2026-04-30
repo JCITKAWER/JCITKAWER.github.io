@@ -29,7 +29,7 @@ export function SceneStory() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(87,188,188,0.08),transparent_60%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(31,71,137,0.12),transparent_60%)] pointer-events-none" />
 
-      <div className="container-tight relative z-10 flex flex-col items-center text-center gap-6 md:gap-10 px-6">
+      <div className="container-tight relative z-10 flex flex-col items-center text-center gap-6 md:gap-10 px-10">
           {/* Badge */}
           <motion.span style={{ opacity: badgeOpacity }} className="badge badge-teal py-1 px-5 text-[10px]">
             Notre Histoire
