@@ -58,11 +58,11 @@ export default function ActiverTicketPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0A1130] selection:bg-jci-blue/30 selection:text-white overflow-x-hidden flex flex-col items-center justify-center">
+    <div className="relative min-h-screen bg-[#0A1130] selection:bg-jci-blue/30 selection:text-white overflow-x-hidden flex flex-col items-center justify-start md:justify-center py-16 md:py-20">
       <MeshGradient variant="glow" />
       <FloatingBlobs />
 
-      <main className="relative z-10 w-full max-w-xl px-8 py-20">
+      <main className="relative z-10 w-full max-w-xl px-6 md:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
