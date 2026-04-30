@@ -137,18 +137,18 @@ body {
   width: 100%;
   max-width: 1536px;
   margin-inline: auto;
-  padding-inline: 2.5rem;
+  padding-inline: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .container-pro {
-    padding-inline: 5rem;
+    padding-inline: 3rem;
   }
 }
 
 @media (min-width: 1280px) {
   .container-pro {
-    padding-inline: 8rem;
+    padding-inline: 4rem;
   }
 }
 
@@ -156,12 +156,12 @@ body {
   width: 100%;
   max-width: 1150px;
   margin-inline: auto;
-  padding-inline: 2.5rem;
+  padding-inline: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .container-tight {
-    padding-inline: 5rem;
+    padding-inline: 3rem;
   }
 }
 

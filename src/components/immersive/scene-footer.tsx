@@ -38,12 +38,12 @@ export function SceneFooter() {
   };
 
   return (
-    <footer id="contact" className="relative overflow-hidden bg-[#0A1130] border-t border-white/5 pb-40">
+    <footer id="contact" className="relative overflow-hidden bg-[#0A1130] border-t border-white/5 pb-28">
       {/* Background Enhancements */}
       <div className="absolute inset-x-0 bottom-0 top-0 bg-[radial-gradient(ellipse_at_top,rgba(0,151,215,0.08),transparent_70%)] pointer-events-none" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-jci-blue via-jci-teal via-white/10 to-transparent" />
 
-      <div className="container-pro pt-40 pb-48 md:pt-60 md:pb-72 grid grid-cols-1 md:grid-cols-3 gap-12 items-start relative z-10">
+      <div className="container-pro pt-40 pb-32 md:pt-60 md:pb-48 grid grid-cols-1 md:grid-cols-3 gap-12 items-start relative z-10">
         {/* Brand */}
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-5">
           <motion.div 
