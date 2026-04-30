@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, User, Phone, CheckCircle, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 import { MeshGradient, FloatingBlobs } from '@/components/immersive/effects/mesh-gradient';
 import { GradientText } from '@/components/immersive/effects/gradient-text';
-import { SceneFooter } from '@/components/immersive/scene-footer';
 
 export default function ActiverTicketPage() {
   const [loading, setLoading] = useState(false);
@@ -59,26 +58,26 @@ export default function ActiverTicketPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-jci-black selection:bg-jci-blue/30 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#0A1130] selection:bg-jci-blue/30 selection:text-white overflow-x-hidden flex flex-col items-center justify-center">
       <MeshGradient variant="glow" />
       <FloatingBlobs />
 
-      <main className="container-pro relative z-10 py-20 min-h-screen flex flex-col items-center justify-center">
+      <main className="relative z-10 w-full max-w-xl px-6 py-20">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-full max-w-xl"
         >
           {/* Header Section */}
-          <div className="flex flex-col items-center mb-16">
-            <span className="badge mb-4">Accès Officiel</span>
-            <h1 className="text-4xl md:text-6xl font-black text-center leading-tight tracking-tight mb-4 uppercase">
-              <GradientText variant="jci" as="span" className="block">ACTIVER</GradientText>
-              <GradientText variant="gold" as="span" className="block">BILLET</GradientText>
+          <div className="flex flex-col items-center mb-16 text-center">
+            <span className="badge badge-teal py-1 px-5 text-[10px] mb-6">Accès Officiel</span>
+            <h1 className="text-[clamp(2.2rem,8vw,4.5rem)] font-black leading-[0.9] uppercase tracking-tighter mb-6">
+              <GradientText variant="jci">ACTIVER</GradientText>
+              <br />
+              <GradientText variant="gold">VOTRE BILLET</GradientText>
             </h1>
-            <p className="text-white/40 text-center text-sm md:text-base max-w-sm leading-relaxed">
-              Associez votre billet physique à votre identité pour l'entrée.
+            <p className="text-white/40 text-sm md:text-base max-w-sm leading-relaxed font-medium">
+              Associez votre billet physique à votre identité pour sécuriser votre entrée au tournoi.
             </p>
           </div>
 
@@ -87,74 +86,78 @@ export default function ActiverTicketPage() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`mb-12 p-5 rounded-2xl text-center font-bold text-sm ${
+                className={`mb-12 p-6 rounded-3xl text-center font-bold text-sm ${
                   message.type === 'success' 
-                    ? 'bg-jci-teal/20 text-jci-teal outline outline-1 outline-jci-teal/30' 
-                    : 'bg-red-500/20 text-red-300 outline outline-1 outline-red-500/30'
+                    ? 'bg-jci-teal/10 text-jci-teal border border-jci-teal/20 shadow-[0_0_40px_rgba(87,188,188,0.1)]' 
+                    : 'bg-red-500/10 text-red-300 border border-red-500/20'
                 }`}
               >
-                {message.text}
+                <div className="flex items-center justify-center gap-3">
+                  {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+                  {message.text}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <form onSubmit={onSubmit} className="flex flex-col gap-10">
-            {/* Name field */}
-            <div className="flex flex-col gap-3">
-              <label className="text-xs font-black text-white/30 uppercase tracking-[0.3em] px-1">
-                Nom & Prénom
-              </label>
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="Ex: Mohamed Amine" 
-                className="w-full h-16 bg-white/[0.05] border border-white/10 rounded-2xl px-6 text-white text-lg focus:outline-none focus:border-jci-blue focus:bg-white/[0.08] transition-all" 
-                required 
-              />
+          <form onSubmit={onSubmit} className="flex flex-col gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-3">
+                <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] px-1">
+                  Nom Complet
+                </label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Mohamed Amine" 
+                  className="w-full h-14 bg-white/[0.03] border border-white/10 rounded-2xl px-5 text-white text-base focus:outline-none focus:border-jci-blue focus:bg-white/[0.06] transition-all" 
+                  required 
+                />
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] px-1">
+                  Téléphone
+                </label>
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  placeholder="55 123 456" 
+                  className="w-full h-14 bg-white/[0.03] border border-white/10 rounded-2xl px-5 text-white text-base focus:outline-none focus:border-jci-blue focus:bg-white/[0.06] transition-all" 
+                  required 
+                />
+              </div>
             </div>
 
-            {/* Phone field */}
             <div className="flex flex-col gap-3">
-              <label className="text-xs font-black text-white/30 uppercase tracking-[0.3em] px-1">
-                Numéro Téléphone
-              </label>
-              <input 
-                type="tel" 
-                name="phone" 
-                placeholder="Ex: 55 123 456" 
-                className="w-full h-16 bg-white/[0.05] border border-white/10 rounded-2xl px-6 text-white text-lg focus:outline-none focus:border-jci-blue focus:bg-white/[0.08] transition-all" 
-                required 
-              />
-            </div>
-
-            {/* Reference field */}
-            <div className="flex flex-col gap-3">
-              <label className="text-xs font-black text-white/30 uppercase tracking-[0.3em] px-1 text-jci-yellow/60">
-                Référence du Billet
+              <label className="text-[10px] font-black text-jci-yellow/50 uppercase tracking-[0.3em] px-1">
+                Code de Référence (TKW-XXX)
               </label>
               <input 
                 type="text" 
                 name="ref" 
-                placeholder="Ex: TKW-001" 
-                className="w-full h-16 bg-white/[0.05] border border-white/10 rounded-2xl px-6 text-white text-lg focus:outline-none focus:border-jci-yellow focus:bg-white/[0.08] transition-all uppercase font-mono tracking-widest" 
+                placeholder="TKW-000" 
+                className="w-full h-16 bg-white/[0.05] border border-white/20 rounded-2xl px-6 text-jci-yellow text-xl focus:outline-none focus:border-jci-yellow focus:bg-white/[0.08] transition-all uppercase font-mono tracking-[0.4em]" 
                 required 
               />
             </div>
 
-            {/* Submit button */}
             <button 
               type="submit" 
               disabled={loading}
-              className="btn-primary w-full h-20 text-xl mt-6 flex items-center justify-center gap-4 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="group relative h-20 mt-4 overflow-hidden rounded-2xl bg-jci-blue transition-all active:scale-[0.98] disabled:opacity-50"
             >
-              {loading ? (
-                <Loader2 className="w-8 h-8 animate-spin" />
-              ) : (
-                <>
-                  <span className="font-black tracking-tight uppercase">ACTIVER MON BILLET</span>
-                  <ArrowRight size={26} />
-                </>
-              )}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700" />
+              <div className="relative flex items-center justify-center gap-4 text-white">
+                {loading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  <>
+                    <span className="font-black text-lg tracking-widest uppercase">ACTIVER MAINTENANT</span>
+                    <Ticket size={24} />
+                  </>
+                )}
+              </div>
             </button>
           </form>
         </motion.div>

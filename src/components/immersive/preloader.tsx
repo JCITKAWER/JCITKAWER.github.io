@@ -1,86 +1,81 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { IMG } from '@/lib/assets';
+import Image from 'next/image';
 
 export function Preloader() {
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    const timer = setTimeout(() => {
-      setLoading(false);
-      document.body.style.overflow = '';
-    }, 2800);
-    return () => {
-      clearTimeout(timer);
-      document.body.style.overflow = '';
-    };
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setLoading(false), 800);
+          return 100;
+        }
+        return prev + Math.random() * 15;
+      });
+    }, 150);
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <AnimatePresence>
       {loading && (
         <motion.div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0A1130]"
-          exit={{ y: '-100%' }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+          exit={{ y: '-100%', opacity: 0 }}
+          transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[1000] bg-[#0A1130] flex flex-col items-center justify-center overflow-hidden"
         >
-          {/* Ambient glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,151,215,0.15),transparent_60%)] pointer-events-none" />
-
-          {/* Logo */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0, rotate: -10 }}
-            animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
+          {/* Animated Background Atmosphere */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,151,215,0.1),transparent_70%)]" />
+          
+          {/* Center Logo/Mascot Pulse */}
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="relative mb-12"
           >
-            <div className="absolute -inset-4 bg-jci-blue/20 blur-2xl rounded-full animate-pulse" />
-            <Image
-              src={IMG.LOGO}
-              alt="JCI"
-              width={80}
-              height={80}
-              className="relative rounded-2xl ring-1 ring-white/10 shadow-2xl"
-              priority
+            <div className="absolute inset-0 bg-jci-blue/20 blur-3xl rounded-full animate-pulse" />
+            <Image 
+              src={IMG.LOGO} 
+              alt="JCI Logo" 
+              width={100} 
+              height={100} 
+              className="relative rounded-2xl shadow-2xl ring-1 ring-white/10" 
             />
           </motion.div>
 
-          {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            className="mt-6 text-2xl md:text-3xl font-black tracking-tight"
-          >
-            <span className="text-white">JCI </span>
-            <span className="text-gradient-jci">TKAWER</span>
-            <span className="text-jci-yellow"> 2.0</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
-            className="mt-2 text-[10px] font-bold tracking-[0.3em] uppercase text-white/40"
-          >
-            Tournoi de Football
-          </motion.p>
-
-          {/* Progress bar */}
-          <div className="mt-8 h-[2px] w-48 bg-white/10 rounded-full overflow-hidden">
+          {/* Progress Container */}
+          <div className="relative w-64 md:w-80 h-1 bg-white/5 rounded-full overflow-hidden mb-6">
             <motion.div
-              className="h-full rounded-full"
-              style={{ background: 'linear-gradient(90deg, #0097D7, #57BCBC, #EFC40F)' }}
-              initial={{ width: '0%' }}
-              animate={{ width: '100%' }}
-              transition={{ duration: 2.4, ease: 'easeInOut' }}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              className="absolute h-full bg-gradient-to-r from-jci-blue via-jci-teal to-jci-yellow"
             />
           </div>
+
+          {/* Loading Stats / Text */}
+          <div className="flex flex-col items-center gap-2">
+            <motion.p 
+              className="text-[10px] font-black uppercase tracking-[0.5em] text-white/40"
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Initialisation du Terrain
+            </motion.p>
+            <p className="text-2xl font-black text-white tabular-nums">
+              {Math.floor(progress)}<span className="text-jci-teal text-sm ml-1">%</span>
+            </p>
+          </div>
+
+          {/* Decorative Corner Accents */}
+          <div className="absolute top-10 left-10 w-20 h-20 border-l-2 border-t-2 border-white/5" />
+          <div className="absolute bottom-10 right-10 w-20 h-20 border-r-2 border-b-2 border-white/5" />
         </motion.div>
       )}
     </AnimatePresence>

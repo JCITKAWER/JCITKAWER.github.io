@@ -23,48 +23,16 @@ export function FloatingBlobs({ className }: { className?: string }) {
       aria-hidden
     >
       <div
-        className="blob"
-        style={{
-          width: 520,
-          height: 520,
-          left: '-8%',
-          top: '12%',
-          background: 'radial-gradient(circle at 30% 30%, #0097D7, transparent 70%)',
-          animationDelay: '0s',
-        }}
+        className="blob w-[520px] h-[520px] -left-[8%] top-[12%] [background:radial-gradient(circle_at_30%_30%,#0097D7,transparent_70%)] [animation-delay:0s]"
       />
       <div
-        className="blob"
-        style={{
-          width: 440,
-          height: 440,
-          right: '-6%',
-          top: '8%',
-          background: 'radial-gradient(circle at 60% 40%, #1F4789, transparent 70%)',
-          animationDelay: '-6s',
-        }}
+        className="blob w-[440px] h-[440px] -right-[6%] top-[8%] [background:radial-gradient(circle_at_60%_40%,#1F4789,transparent_70%)] [animation-delay:-6s]"
       />
       <div
-        className="blob"
-        style={{
-          width: 580,
-          height: 580,
-          left: '20%',
-          bottom: '-12%',
-          background: 'radial-gradient(circle at 50% 50%, #57BCBC, transparent 70%)',
-          animationDelay: '-12s',
-        }}
+        className="blob w-[580px] h-[580px] left-[20%] -bottom-[12%] [background:radial-gradient(circle_at_50%_50%,#57BCBC,transparent_70%)] [animation-delay:-12s]"
       />
       <div
-        className="blob"
-        style={{
-          width: 360,
-          height: 360,
-          right: '20%',
-          bottom: '-6%',
-          background: 'radial-gradient(circle at 40% 60%, #5BB7FF, transparent 75%)',
-          animationDelay: '-18s',
-        }}
+        className="blob w-[360px] h-[360px] right-[20%] -bottom-[6%] [background:radial-gradient(circle_at_40%_60%,#5BB7FF,transparent_75%)] [animation-delay:-18s]"
       />
     </div>
   );

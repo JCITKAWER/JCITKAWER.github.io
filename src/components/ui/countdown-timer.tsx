@@ -14,7 +14,7 @@ export function CountdownTimer() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    requestAnimationFrame(() => setMounted(true));
+    setMounted(true);
     const targetDate = new Date('2026-05-09T09:00:00').getTime();
 
     const update = () => {

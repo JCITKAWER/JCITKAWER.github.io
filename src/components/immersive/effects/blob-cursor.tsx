@@ -20,7 +20,7 @@ export function CustomCursor() {
     const isTouch = window.matchMedia('(pointer: coarse)').matches;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (isTouch || reduce) return;
-    requestAnimationFrame(() => setEnabled(true));
+    setEnabled(true);
 
     const onMove = (e: MouseEvent) => {
       x.set(e.clientX);
