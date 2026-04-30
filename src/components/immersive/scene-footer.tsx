@@ -16,20 +16,45 @@ const WhatsAppIcon = ({ size, color, className }: { size?: number; color?: strin
   </svg>
 );
 
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+
 export function SceneFooter() {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 150, damping: 15 });
+  const sy = useSpring(y, { stiffness: 150, damping: 15 });
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set((e.clientX - centerX) * 0.3);
+    y.set((e.clientY - centerY) * 0.3);
+  };
+
+  const onMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
   return (
-    <footer id="contact" className="relative overflow-hidden bg-[#0A1130] border-t border-white/5 pb-24">
+    <footer id="contact" className="relative overflow-hidden bg-[#0A1130] border-t border-white/5 pb-40">
       {/* Background Enhancements */}
       <div className="absolute inset-x-0 bottom-0 top-0 bg-[radial-gradient(ellipse_at_top,rgba(0,151,215,0.08),transparent_70%)] pointer-events-none" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-jci-blue via-jci-teal via-white/10 to-transparent" />
 
-      <div className="container-pro pt-40 pb-32 md:pt-60 md:pb-52 grid grid-cols-1 md:grid-cols-3 gap-12 items-start relative z-10">
+      <div className="container-pro pt-40 pb-48 md:pt-60 md:pb-72 grid grid-cols-1 md:grid-cols-3 gap-12 items-start relative z-10">
         {/* Brand */}
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-5">
-          <div className="relative shrink-0">
+          <motion.div 
+            onMouseMove={onMouseMove}
+            onMouseLeave={onMouseLeave}
+            style={{ x: sx, y: sy }}
+            className="relative shrink-0 cursor-pointer"
+          >
             <div className="absolute -inset-2 bg-jci-blue/20 blur-xl rounded-full" />
             <Image src={IMG.LOGO} alt={EVENT.organizer} width={72} height={72} className="relative rounded-2xl ring-1 ring-white/10 shadow-2xl" />
-          </div>
+          </motion.div>
           <div className="space-y-1">
             <p className="text-white font-bold text-base md:text-lg">{EVENT.organizer}</p>
             <p className="text-white/45 text-[10px] tracking-wider uppercase font-semibold">JCI Tunisia • ElFejja Bessetine</p>

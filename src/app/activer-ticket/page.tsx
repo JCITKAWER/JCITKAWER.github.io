@@ -86,14 +86,24 @@ export default function ActiverTicketPage() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`mb-12 p-6 rounded-3xl text-center font-bold text-sm ${
+                className={`relative mb-12 p-6 rounded-3xl text-center font-bold text-sm overflow-hidden ${
                   message.type === 'success' 
                     ? 'bg-jci-teal/10 text-jci-teal border border-jci-teal/20 shadow-[0_0_40px_rgba(87,188,188,0.1)]' 
                     : 'bg-red-500/10 text-red-300 border border-red-500/20'
                 }`}
               >
-                <div className="flex items-center justify-center gap-3">
-                  {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+                {message.type === 'success' && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 0], scale: [1, 1.5, 2], rotate: [0, 15, -15] }}
+                    transition={{ duration: 1, repeat: 2 }}
+                    className="absolute inset-0 pointer-events-none flex items-center justify-center"
+                  >
+                    <div className="w-full h-full bg-[radial-gradient(circle,rgba(87,188,188,0.2)_0%,transparent_70%)]" />
+                  </motion.div>
+                )}
+                <div className="flex items-center justify-center gap-3 relative z-10">
+                  {message.type === 'success' ? <CheckCircle size={20} className="animate-bounce" /> : <AlertCircle size={20} />}
                   {message.text}
                 </div>
               </motion.div>

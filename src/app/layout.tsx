@@ -33,6 +33,43 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SportsEvent",
+  "name": "JCI Tkawer 2.0 — Tournoi de Football",
+  "description": "Le plus grand tournoi de football amateur à Mornaguia, organisé par JCI ElFejja Bessetine.",
+  "startDate": "2026-05-09T09:00",
+  "endDate": "2026-05-09T18:00",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "location": {
+    "@type": "Place",
+    "name": "Stade Mornaguia",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Mornaguia",
+      "addressRegion": "Manouba",
+      "addressCountry": "TN"
+    }
+  },
+  "image": [
+    "https://jcitkawer.github.io/images/afficheJCITKAWER.jpeg"
+  ],
+  "organizer": {
+    "@type": "Organization",
+    "name": "JCI ElFejja Bessetine",
+    "url": "https://www.facebook.com/61571810806339"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "https://jcitkawer.github.io/",
+    "price": "10",
+    "priceCurrency": "TND",
+    "availability": "https://schema.org/InStock",
+    "validFrom": "2026-04-01"
+  }
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,6 +77,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning data-scroll-behavior="smooth" className={jakarta.variable}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body suppressHydrationWarning className="min-h-screen bg-[#0A1130] text-white antialiased font-sans">
         {children}
       </body>
